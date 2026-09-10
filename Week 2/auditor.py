@@ -8,3 +8,6 @@ while True:
         print("Error, invalid input")    
     else:
         inventory_count += int(input_value)
+    if inventory_count >= 500:
+        print("The total inventory has exceeded 500 units.")
+        break

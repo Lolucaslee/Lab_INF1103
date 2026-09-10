@@ -6,3 +6,5 @@ while True:
         break
     elif not input_value.isdigit() or int(input_value) < 0:
         print("Error, invalid input")    
+    else:
+        inventory_count += int(input_value)

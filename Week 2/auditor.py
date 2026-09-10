@@ -14,4 +14,5 @@ while True:
         print("The total inventory has exceeded 500 units.")
         break
     
-print("Total units processed",inventory_count, "& Number of failed entries: ",error_count)
+print("Total units processed",inventory_count)
+print("Number of failed entries: ",error_count)

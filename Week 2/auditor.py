@@ -8,6 +8,8 @@ while True:
         break
     elif not input_value.isdigit() or int(input_value) < 0:
         print("Error, invalid input")    
+        error_count += 1
+
     else:
         inventory_count += int(input_value)
     if inventory_count >= 500:

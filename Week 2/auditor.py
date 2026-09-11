@@ -1,3 +1,7 @@
+print("===============================================================")
+print("Welcome to the Inventory Auditor Program")
+print("===============================================================")
+
 inventory_count = 0
 input_value = 0
 error_count = 0

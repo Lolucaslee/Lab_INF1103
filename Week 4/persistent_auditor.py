@@ -113,7 +113,7 @@ def main():
         error_count = 0
 
         # 4. User input prompt for Code or Name
-        identifier = input("Enter Product Code or Name: ").strip()
+        identifier = input("Enter Product Code or Name (Quit to exit): ").strip()
         if identifier.lower() == 'quit':
             break
 

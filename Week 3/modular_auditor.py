@@ -42,7 +42,7 @@ def main():
             break
         elif result is None:
             error_count += 1
-        else:
+        else:   
             delivery_count += 1
             inventory_count = process_delivery(inventory_count, result)
             total_tax = calculate_tax(inventory_count)

@@ -77,7 +77,7 @@ def load_inventory(filename="inventory.json") -> Inventory:
                 "price": 120.00,
                 "qty": 15,
                 "type": "physical",
-                "weight": 1.2,
+                "weight": 1.5,
             },
             {
                 "id": "D001",

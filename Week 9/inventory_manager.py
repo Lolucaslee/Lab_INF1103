@@ -1,21 +1,59 @@
 import json
 import os
-from product import Product
+from can_be_shipped import CanBeShipped
+from digital_product import DigitalProduct
 from inventory import Inventory
+from physical_product import PhysicalProduct
+from product import Product
 
 
 def greetings():
-    """Prints the system header banner."""
+    """Prints application header banner."""
     print("===============================================================")
-    print("INVENTORY MANAGEMENT SYSTEM")
+    print("INVENTORY MANAGEMENT SYSTEM (Lab 7 Refactored Architecture)")
     print("===============================================================")
+
+
+def test_abstract_instantiation():
+    """
+    Lab 7 Section 3.3 Test: Verifies that abstract class Product 
+    cannot be instantiated directly.
+    """
+    print("\n--- Running Section 3.3 Test (Abstract Class Direct Instantiation) ---")
+    try:
+        invalid_product = Product("P999", "Generic Item", 10.0, 5)  # type: ignore
+        print("FAIL: Product was instantiated.")
+    except TypeError as e:
+        print("SUCCESS: Cannot instantiate abstract class Product directly.")
+        print(f"Caught expected TypeError: {e}")
+    print("-------------------------------------------------------------------\n")
+
+
+def create_product_from_dict(data: dict) -> Product:
+    """Factory helper function to instantiate subclasses from dictionary data."""
+    product_type = data.get("type", "physical")
+    if product_type == "physical":
+        return PhysicalProduct(
+            product_id=data["id"],
+            name=data["name"],
+            price=data["price"],
+            stock=data["qty"],
+            weight=data.get("weight", 0.0),
+        )
+    elif product_type == "digital":
+        return DigitalProduct(
+            product_id=data["id"],
+            name=data["name"],
+            price=data["price"],
+            stock=data["qty"],
+            download_size=data.get("download_size", 0.0),
+        )
+    else:
+        raise ValueError(f"Unknown product type: {product_type}")
 
 
 def load_inventory(filename="inventory.json") -> Inventory:
-    """
-    Loads product data from inventory.json into an Inventory instance.
-    Uses Week 5 default starter list if the file is missing.
-    """
+    """Loads product data from JSON into the Inventory instance."""
     inventory = Inventory()
 
     if os.path.exists(filename):
@@ -23,29 +61,40 @@ def load_inventory(filename="inventory.json") -> Inventory:
             with open(filename, "r") as file:
                 data = json.load(file)
                 for item in data:
-                    product = Product.from_dict(item)
+                    product = create_product_from_dict(item)
                     inventory.add_product(product)
-                print("inventory.json found.")
-                print("Inventory loaded successfully.\n")
+                print(f"Loaded '{filename}' successfully.\n")
                 return inventory
         except Exception as e:
             print(f"Error loading inventory file: {e}")
             return inventory
     else:
-        print("inventory.json not found. Initializing default inventory.")
-        # Starter default list from Week 5
+        print(f"'{filename}' not found. Initializing default inventory.")
         defaults = [
-            {"id": "P001", "name": "Laptop", "price": 1200.00, "qty": 15},
-            {"id": "P002", "name": "Mouse", "price": 25.50, "qty": 40},
-            {"id": "P003", "name": "Keyboard", "price": 45.00, "qty": 25},
+            {
+                "id": "P001",
+                "name": "Mechanical Keyboard",
+                "price": 120.00,
+                "qty": 15,
+                "type": "physical",
+                "weight": 1.2,
+            },
+            {
+                "id": "D001",
+                "name": "Antivirus License Key",
+                "price": 29.99,
+                "qty": 100,
+                "type": "digital",
+                "download_size": 450.0,
+            },
         ]
         for item in defaults:
-            inventory.add_product(Product.from_dict(item))
+            inventory.add_product(create_product_from_dict(item))
         return inventory
 
 
 def save_inventory(inventory: Inventory, filename="inventory.json"):
-    """Serializes Product objects in Inventory back to inventory.json."""
+    """Serializes stored products into JSON format."""
     data = [product.to_dict() for product in inventory.get_all_products()]
     try:
         with open(filename, "w") as file:
@@ -56,7 +105,7 @@ def save_inventory(inventory: Inventory, filename="inventory.json"):
 
 
 def add_product_flow(inventory: Inventory):
-    """Handles user input prompts for adding a new product."""
+    """User input prompt for adding a physical or digital product."""
     print("\nAdd New Product")
     prod_id = input("Product ID: ").strip()
 
@@ -68,71 +117,66 @@ def add_product_flow(inventory: Inventory):
     try:
         price = float(input("Price: ").strip())
         qty = int(input("Stock Quantity: ").strip())
-        new_product = Product(prod_id, name, price, qty)
+
+        print("Select Product Type:")
+        print("1. Physical Product")
+        print("2. Digital Product")
+        type_choice = input("Option (1/2): ").strip()
+
+        if type_choice == "1":
+            weight = float(input("Weight (kg): ").strip())
+            new_product = PhysicalProduct(prod_id, name, price, qty, weight)
+        elif type_choice == "2":
+            size = float(input("Download Size (MB): ").strip())
+            new_product = DigitalProduct(prod_id, name, price, qty, size)
+        else:
+            print("Invalid product type selected.")
+            return
+
         inventory.add_product(new_product)
         print("Product added successfully!")
     except ValueError:
-        print("Invalid input for price or stock quantity.")
-
-
-def update_stock_flow(inventory: Inventory):
-    """Handles user input prompts for updating product stock."""
-    print("\nUpdate Stock")
-    prod_id = input("Enter Product ID: ").strip()
-    product = inventory.search_product(prod_id)
-
-    if product:
-        print("\nProduct Found:")
-        print(f"Name: {product.name}")
-        print(f"Current Stock: {product.stock}\n")
-
-        try:
-            new_qty = int(input("New Stock Quantity: ").strip())
-            product.update_stock(new_qty)
-            print("\nStock updated successfully!")
-        except ValueError as e:
-            print(f"Invalid input for stock quantity: {e}")
-    else:
-        print("\nProduct not found.")
+        print("Invalid input format entered.")
 
 
 def search_product_flow(inventory: Inventory):
-    """Handles searching and displaying a single product's detailed view."""
+    """Searches product and displays fulfillment details and shipping calculations."""
     print("\nSearch Product")
     prod_id = input("Enter Product ID: ").strip()
     product = inventory.search_product(prod_id)
 
     if product:
-        print("\nProduct Found")
-        print("-" * 30)
-        print(f"ID: {product.product_id}")
-        print(f"Name: {product.name}")
-        print(f"Price: ${product.price:.2f}")
-        print(f"Stock: {product.stock}")
-        print("-" * 30)
+        print("\nProduct Details")
+        print("-" * 45)
+        product.display_information()
+        print(f"Fulfilment: {product.get_fulfilment_info()}")
+
+        if isinstance(product, CanBeShipped):
+            shipping_fee = product.calculate_shipping_cost()
+            print(f"Calculated Shipping Cost ($0.30/kg): ${shipping_fee:.2f}")
+        else:
+            print("Shipping: N/A (Digital Product)")
+        print("-" * 45)
     else:
         print("\nProduct not found.")
-
-
-def display_menu():
-    """Displays user menu options."""
-    print("\nMENU")
-    print("1. Display All Products")
-    print("2. Add Product")
-    print("3. Update Stock")
-    print("4. Search Product")
-    print("5. Save Inventory")
-    print("6. Exit")
 
 
 def main():
     """Main execution loop."""
     greetings()
-    json_path = "week_8/new_inventory.json"  # or "week_8/new_inventory.json"
+    test_abstract_instantiation()
+
+    json_path = "inventory.json"
     inventory = load_inventory(json_path)
 
     while True:
-        display_menu()
+        print("\nMENU")
+        print("1. Display All Products")
+        print("2. Add Product")
+        print("3. Update Stock")
+        print("4. Search Product")
+        print("5. Save Inventory")
+        print("6. Exit")
         choice = input("Enter option: ").strip()
 
         if choice == "1":
@@ -140,20 +184,27 @@ def main():
         elif choice == "2":
             add_product_flow(inventory)
         elif choice == "3":
-            update_stock_flow(inventory)
+            prod_id = input("Enter Product ID: ").strip()
+            prod = inventory.search_product(prod_id)
+            if prod:
+                try:
+                    new_q = int(input("New Stock: ").strip())
+                    prod.update_stock(new_q)
+                    print("Stock updated.")
+                except ValueError as err:
+                    print(f"Error: {err}")
+            else:
+                print("Product not found.")
         elif choice == "4":
             search_product_flow(inventory)
         elif choice == "5":
-            print("\nSaving inventory...")
             save_inventory(inventory)
         elif choice == "6":
-            print("\nSaving inventory before exit...")
             save_inventory(inventory)
-            print("\nThank you for using Inventory Management System.")
             print("Program terminated.")
             break
         else:
-            print("Invalid option. Please try again.")
+            print("Invalid option. Try again.")
 
 
 if __name__ == "__main__":

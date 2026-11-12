@@ -6,7 +6,7 @@ class Supplier:
     and handed to a Product; neither owns the other and either can exist alone.
     """
 
-    def __init__(self, supplier_id: str, name: str, contact_email: str):
+    def __init__(self, supplier_id: str, name: str, contact_email: str) -> None:
         self._supplier_id: str = str(supplier_id)
         self._name: str = str(name)
         self._contact_email: str = str(contact_email)

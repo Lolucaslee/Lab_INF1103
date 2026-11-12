@@ -12,7 +12,7 @@ class Product(ABC):
 
     def __init__(
         self, product_id: str, name: str, price: float, stock: int, supplier: Supplier
-    ):
+    ) -> None:
         self._product_id: str = str(product_id)
         self._name: str = str(name)
         self._price: float = float(price)

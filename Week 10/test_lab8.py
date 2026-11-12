@@ -107,9 +107,30 @@ def test_polymorphism_and_lsp() -> None:
             print("  rejects negative stock the same way:", err)
 
 
+def test_inventory_normal_operations() -> None:
+    heading("6.2 Both product types through Inventory's normal operations")
+    supplier = Supplier("S001", "TechSupply Co", "sales@techsupply.com")
+    inventory = Inventory()
+    print("add physical:", inventory.add_product(PhysicalProduct("P001", "Keyboard", 120.0, 15, supplier, 1.5)))
+    print("add digital :", inventory.add_product(DigitalProduct("D001", "Antivirus", 29.99, 100, supplier, 450.0)))
+    print("add duplicate ID rejected:", not inventory.add_product(DigitalProduct("D001", "Dup", 1.0, 1, supplier, 1.0)))
+
+    inventory.display_all()
+    for pid in ("P001", "D001"):
+        found = inventory.find_product(pid)
+        print(f"find_product('{pid}') ->", found.name if found else None)
+    print("find_product('X999') ->", inventory.find_product("X999"))
+
+    for pid in ("P001", "D001"):
+        removed = inventory.remove_product(pid)
+        print(f"remove_product('{pid}') ->", removed.name if removed else None)
+    print("remaining products:", len(inventory.products))
+
+
 if __name__ == "__main__":
     test_association()
     test_aggregation()
     test_composition()
     test_polymorphism_and_lsp()
+    test_inventory_normal_operations()
     sys.exit(0)

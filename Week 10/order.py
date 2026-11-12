@@ -10,7 +10,7 @@ class OrderLine:
     Product but does not own it).
     """
 
-    def __init__(self, product: Product, quantity: int):
+    def __init__(self, product: Product, quantity: int) -> None:
         self.product: Product = product
         self.quantity: int = quantity
 
@@ -32,7 +32,7 @@ class Order:
     orders, and they disappear with the order.
     """
 
-    def __init__(self, order_id: str):
+    def __init__(self, order_id: str) -> None:
         self.order_id: str = order_id
         self.order_lines: list[OrderLine] = []
 

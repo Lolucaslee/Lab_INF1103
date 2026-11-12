@@ -16,7 +16,7 @@ class DigitalProduct(Product):
         stock: int,
         supplier: Supplier,
         download_size: float,
-    ):
+    ) -> None:
         super().__init__(product_id, name, price, stock, supplier)
         self._download_size: float = float(download_size)
 

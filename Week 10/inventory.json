@@ -1,0 +1,41 @@
+[
+    {
+        "id": "P001",
+        "name": "Mechanical Keyboard",
+        "price": 120.0,
+        "qty": 15,
+        "supplier": {
+            "id": "S000",
+            "name": "Unknown Supplier",
+            "email": "unknown@example.com"
+        },
+        "type": "physical",
+        "weight": 1.5
+    },
+    {
+        "id": "D001",
+        "name": "Antivirus License Key",
+        "price": 29.99,
+        "qty": 100,
+        "supplier": {
+            "id": "S000",
+            "name": "Unknown Supplier",
+            "email": "unknown@example.com"
+        },
+        "type": "digital",
+        "download_size": 450.0
+    },
+    {
+        "id": "P10001",
+        "name": "Laptop Stand",
+        "price": 30.0,
+        "qty": 20,
+        "supplier": {
+            "id": "S000",
+            "name": "Unknown Supplier",
+            "email": "unknown@example.com"
+        },
+        "type": "physical",
+        "weight": 4.0
+    }
+]

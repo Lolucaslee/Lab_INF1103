@@ -11,11 +11,11 @@ from supplier import Supplier
 def greetings() -> None:
     """Prints application header banner."""
     print("===============================================================")
-    print("INVENTORY MANAGEMENT SYSTEM (Lab 7 Refactored Architecture)")
+    print("INVENTORY MANAGEMENT SYSTEM (Lab 8 Relationships Architecture)")
     print("===============================================================")
 
 
-def test_abstract_instantiation():
+def test_abstract_instantiation() -> None:
     """
     Lab 7 Section 3.3 Test: Verifies that abstract class Product 
     cannot be instantiated directly.
@@ -176,7 +176,7 @@ def add_product_flow(inventory: Inventory) -> None:
         print("Invalid input format entered.")
 
 
-def search_product_flow(inventory: Inventory):
+def search_product_flow(inventory: Inventory) -> None:
     """Searches product and displays fulfillment details and shipping calculations."""
     print("\nSearch Product")
     prod_id = input("Enter Product ID: ").strip()
@@ -199,7 +199,7 @@ def search_product_flow(inventory: Inventory):
         print("\nProduct not found.")
 
 
-def main():
+def main() -> None:
     """Main execution loop."""
     greetings()
     test_abstract_instantiation()
